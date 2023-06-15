@@ -1,0 +1,28 @@
+#include <opencv2/opencv.hpp>
+#include <opencv2/dnn.hpp>
+
+int main() {
+    // Load the image
+    cv::Mat img = cv::imread("wood.jpg");
+
+    if (img.empty())
+    {
+        std::cout << "Could not open or find the image" << std::endl;
+        return -1;
+    }
+
+    // Load the pre-trained neural network
+    cv::dnn::Net net = cv::dnn::readNetFromTensorflow("wood_types.pb");
+
+    // Convert the image to blob so we can pass it to the neural network
+    cv::Mat blob = cv::dnn::blobFromImage(img, 1.0, cv::Size(224, 224), cv::Scalar(0, 0, 0), true, false);
+
+    // Set the blob as input to the network and perform a forward-pass to compute output
+    net.setInput(blob);
+    cv::Mat prob = net.forward();
+
+    // Print the result (this would normally involve finding the class with the highest score)
+    std::cout << prob << std::endl;
+
+    return 0;
+}
